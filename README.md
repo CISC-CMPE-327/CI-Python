@@ -135,7 +135,7 @@ def run_app(
         index = i * -1
         assert expected_terminal_tails[index] == out_lines[index]
 
-    # compare output file to the expected output fuke:
+    # compare output file to the expected output file:
     if expected_output_file is not None:
         with open(temp_file, 'r') as temp_file_of:
             content = temp_file_of.read()
