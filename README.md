@@ -16,11 +16,18 @@ Folder structure:
 │   └───workflows
 │           pythonapp.yml =======> CI workflow for python
 │
-└───package
-        app.py
-        test_app.py   ==========> test file
-        __init__.py
-        
+├───qa327
+│   │   app.py
+│   │   __init__.py
+│   └───__main__.py
+│ 
+│ 
+└───qa327_test
+    │   test_app.py
+    │   __init__.py
+    │
+    └───r2
+        └───file_output.txt
 ```
 
 To run all the test code:
