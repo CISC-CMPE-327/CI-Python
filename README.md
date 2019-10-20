@@ -130,12 +130,12 @@ def run_app(
     # split terminal output in lines
     out_lines = out.splitlines()
 
-    # compare terminal outputs from the the last time backward`
+    # compare terminal outputs 
     for i in range(1, len(expected_terminal_tails)+1):
         index = i * -1
         assert expected_terminal_tails[index] == out_lines[index]
 
-    # compare expected file output:
+    # compare output file to the expected output fuke:
     if expected_output_file is not None:
         with open(temp_file, 'r') as temp_file_of:
             content = temp_file_of.read()
