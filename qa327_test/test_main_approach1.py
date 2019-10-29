@@ -9,9 +9,7 @@ path = os.path.dirname(os.path.abspath(__file__))
 
 
 def test_r2(capsys):
-    """This is a self-contained test case. In general, we want 
-    all the information related to a test case completely stored 
-    in one-place for easy lookup.
+    """Testing r2. All required information stored in folder r2. 
 
     Arguments:
         capsys -- object created by pytest to capture stdout and stderr
