@@ -87,7 +87,7 @@ def helper(
     # the following print content will only display if a 
     # test case failed:
     print('std.in:', terminal_input)
-    print('valid accounts:', input_valid_accounts)
+    print('valid accounts:', intput_valid_accounts)
     print('terminal output:', out_lines)
     print('terminal output (expected tail):', expected_tail_of_terminal_output)
 
