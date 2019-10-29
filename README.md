@@ -48,7 +48,7 @@ $ pytest
 ```
 
 
-This example app has two simple requirements:
+This example app has three simple requirements:
 
 ```python
 import sys
@@ -87,9 +87,9 @@ def main():
 
 
 
-We created a helper function to test for different cases:
+We created a helper function to assist testing. Let's test requirement R2:
 
-Approach #1. We store all the input content (terminal & file) and all the output content (terminal & file) in a folder. The helper function looks up data from the folder.
+Approach #1. We store all the input content (terminal & file) and all the output content (terminal & file) in a folder (r2 in this test case). The helper function looks up corresponding data from the folder.
 
 ```python
 import tempfile
