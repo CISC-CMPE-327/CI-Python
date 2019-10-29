@@ -14,7 +14,6 @@ def test_r2(capsys):
     Arguments:
         capsys -- object created by pytest to capture stdout and stderr
     """
-
     helper(
         capsys=capsys,
         test_id='r2'
