@@ -34,10 +34,17 @@ Folder structure:
             valid_account_list_file.txt
 ```
 
+To run the application:
+
+```
+$ pip install -r requirements.txt
+$ python -m qa327
+```
+
 To run all the test code:
 
 ```
-pytest
+$ pytest
 ```
 
 
