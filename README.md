@@ -17,9 +17,9 @@ Folder structure:
 │           pythonapp.yml =======> CI workflow for python
 │
 ├───qa327
-│   │   app.py
+│   │   app.py ===============> where we actually store the main function
 │   │   __init__.py
-│   └───__main__.py
+│   └───__main__.py ==========> trigger by 'python -m qa327'
 │ 
 │ 
 └───qa327_test
