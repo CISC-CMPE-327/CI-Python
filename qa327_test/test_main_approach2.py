@@ -71,7 +71,7 @@ def helper(
 
     # set terminal input
     sys.stdin = io.StringIO(
-        os.linesep.join(terminal_input))
+        '\n'.join(terminal_input))
 
     # run the program
     app.main()
