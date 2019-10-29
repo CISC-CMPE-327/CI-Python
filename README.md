@@ -87,7 +87,7 @@ def main():
 
 
 
-We created a helper function to assist testing. Let's test requirement R2:
+We created a helper function to assist testing. Let's create a test case cover R2 & R3:
 
 Approach #1. We store all the input content (terminal & file) and all the output content (terminal & file) in a folder (r2 in this test case). The helper function looks up corresponding data from the folder.
 
