@@ -2,7 +2,18 @@
 
 [![](https://github.com/CISC-CMPE-327/CI-Python/workflows/Python%20application/badge.svg)](https://github.com/CISC-CMPE-327/CI-Python/actions)
 
-Python CI template for GitHub Actions
+### Python CI template for GitHub Actions
+
+<hr>
+
+If you would like to use `pytest` for system testing, please skip the rest of this paragraph.</br>
+Otherwise, if you are having problems setting up pytest/creating test cases/getting everything to work, you may want to consider using an alternate script-based approach. The repositoty linked below shows how to do this:
+
+https://github.com/vacer25/CMPE-327/
+
+The rest of this document refers to the pytest system testing approach.
+
+<hr>
 
 Folder structure:
 ```
