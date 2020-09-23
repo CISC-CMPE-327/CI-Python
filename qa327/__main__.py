@@ -1,6 +1,4 @@
-from qa327.frontend import app
-import webbrowser
-import os
+from qa327 import app, frontend
 
 FLASK_PORT = 8081
 
