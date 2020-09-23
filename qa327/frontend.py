@@ -72,7 +72,7 @@ def authenticate(inner_function):
     @param inner_function: any python function that accepts a user object
 
     Wrap any python function and check the current session to see if 
-    the user has logged in. If loggin, it will call the inner_function
+    the user has logged in. If login, it will call the inner_function
     with the logged in user object.
 
     To wrap a function, we can put a decoration on that function.
@@ -94,7 +94,7 @@ def authenticate(inner_function):
                 # with user as parameter
                 return inner_function(user)
         else:
-            # else, redict to the login page
+            # else, redirect to the login page
             return redirect('/login')
 
     # return the wrapped version of the inner_function:

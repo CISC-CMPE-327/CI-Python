@@ -31,6 +31,9 @@ Folder structure:
 │   │   app.py ===============> where we actually store the main function
 │   │   __init__.py
 │   └───__main__.py ==========> trigger by 'python -m qa327'
+│   └───frontend.py ==========> defines frontend logic
+│   └───backend.py  ==========> defines backend logic
+│   └───models.py   ==========> defines all the models
 │ 
 │ 
 └───qa327_test
@@ -63,7 +66,6 @@ This example app has three simple requirements:
 
 ```python
 import sys
-import os
 
 
 def main():
@@ -81,7 +83,7 @@ def main():
 
     # R1:
     user_input = input('what is the key?\n')
-    if(user_input == 'login'):
+    if user_input == 'login' :
         print('here is the content')
         with open(valid_account_list_file) as rf:
             print(rf.read())
@@ -108,7 +110,7 @@ from importlib import reload
 import os
 import io
 import sys
-import qa327.app as app
+from qa327 import app
 
 path = os.path.dirname(os.path.abspath(__file__))
 
@@ -200,7 +202,7 @@ from importlib import reload
 import os
 import io
 import sys
-import qa327.app as app
+from qa327 import app
 
 path = os.path.dirname(os.path.abspath(__file__))
 

@@ -1,7 +1,11 @@
 from flask import Flask
 import os
 
-# define global variables here
+"""
+This file defines global variables and config values
+"""
+
+
 package_dir = os.path.dirname(
     os.path.abspath(__file__)
 )

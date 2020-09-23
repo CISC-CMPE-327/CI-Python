@@ -1,6 +1,10 @@
 from qa327 import app
 from flask_sqlalchemy import SQLAlchemy
 
+"""
+This file defines all models used by the server
+"""
+
 
 db = SQLAlchemy()
 db.init_app(app)
@@ -16,6 +20,7 @@ class User(db.Model):
     name = db.Column(db.String(1000))
 
 
+# it creates all the SQL tables if they do not exist
 with app.app_context():
     db.create_all()
     db.session.commit()
