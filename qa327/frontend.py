@@ -69,7 +69,7 @@ def logout():
 
 def authenticate(inner_function):
     """
-    @param inner_function: any python function that accepts a user object
+    :param inner_function: any python function that accepts a user object
 
     Wrap any python function and check the current session to see if 
     the user has logged in. If login, it will call the inner_function
