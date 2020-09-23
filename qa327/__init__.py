@@ -1,4 +1,5 @@
 from flask import Flask
+import sys
 import os
 
 # define global variables here
@@ -11,6 +12,14 @@ templates = os.path.join(
 )
 
 app = Flask('this is a simple web application', template_folder=templates)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = '69cae04b04756f65eabcd2c5a11c8c24'
+# if the user supplies a database file name, we use
+# that instead
+if len(sys.argv) > 1:
+    database_url = "sqlite:////" + os.path.abspath(sys.argv[1])
+else:
+    # default:
+    # db.sqlite at the working directory
+    database_url = 'sqlite:///db.sqlite'
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
