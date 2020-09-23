@@ -61,7 +61,7 @@ $ pytest
 You will see your browswer being controlled by the script automatically jumping around to test the website.
 
 
-#### Frontend
+### Frontend
 
 In order to understand every single bit of this template, first please try running it, registering a user, logging in, and logging out to develop a general sense of what is going on. 
 
@@ -156,7 +156,7 @@ So this fragment of code will read the data from the form, as you can tell from 
 
 
 
-#### Backend
+### Backend
 
 The backend portion controls the business logics, such as all associated actions to be done to finsih a transaction, and the interaction of data models. All the backend codes are included in the backend.py file. You can make it a module if there are too many logics involved in the single file, but for simplicity of this demo, we use a single file. Following the above registration example, if we take a look at what is inside the `register_user` function:
 
