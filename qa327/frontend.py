@@ -1,17 +1,19 @@
-from flask import Flask, render_template
-import os
-
-package_dir = os.path.dirname(
-    os.path.abspath(__file__)
-)
-
-templates = os.path.join(
-    package_dir, "templates"
-)
-
-app = Flask('this is a simple web application', template_folder=templates)
+from flask import render_template, Blueprint
 
 
-@app.route('/')
+frontend = Blueprint('frontend', __name__)
+
+
+@frontend.route('/login')
 def hello_word():
     return render_template('login.html')
+
+
+@frontend.route('/')
+def profile():
+    return render_template('profile.html')
+
+
+@frontend.route('/register')
+def register():
+    return render_template('register.html')
