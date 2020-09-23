@@ -1,10 +1,10 @@
-from flask import render_template, Blueprint, request, session, redirect
+from flask import render_template, request, session, redirect
 from qa327 import app
 import qa327.backend as bn
 
 """
 This file defines the front-end part of the service.
-It ellaborates how the services should handle different
+It elaborates how the services should handle different
 http requests from the client (browser) through templating.
 The html templates are stored in the 'templates' folder. 
 """
@@ -41,7 +41,6 @@ def login_post():
     email = request.form.get('email')
     password = request.form.get('password')
     user = bn.login_user(email, password)
-    print(user)
     if user:
         session['logged_in'] = user.email
         """
