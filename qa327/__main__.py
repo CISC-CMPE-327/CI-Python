@@ -1,4 +1,8 @@
-from qa327 import app, frontend
+from qa327 import app
+
+"""
+This file runs the server at a given port
+"""
 
 FLASK_PORT = 8081
 
