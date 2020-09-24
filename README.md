@@ -76,9 +76,7 @@ def register_get():
     return render_template('register.html', message='')
 ```
 
-The first line here defines that if a client request `localhost:8081\register` with the 'GET' method, this fragment of code should handle that request and return the corresponding HTML code to be rendered at the client side. For example, if the user type `localhost:8081\register` on his/her browswer and hit enter, then the browser will send a GET request. 
-
-This fragment of code recieve the request, and lookup for a HTMP template in the `qa327.templates` folder.
+The first line here defines that if a client request `localhost:8081\register` with the 'GET' method, this fragment of code should handle that request and return the corresponding HTML code to be rendered at the client side. For example, if the user type `localhost:8081\register` on his/her browswer and hit enter, then the browser will send a GET request. The above fragment of code recieve the request, and the last line looks up for a HTMP template named `register.html` in the `qa327.templates` folder.
 ```html
 {% extends 'base.html' %}
 
@@ -105,7 +103,7 @@ This fragment of code recieve the request, and lookup for a HTMP template in the
 {% endblock %}
 ```
 
-Let's break this down. This is the [Jinja Templating format]{https://jinja.palletsprojects.com/en/2.11.x/templates/}. In contrast to React, Vue or other frameworks, it is a server-side rendering framework. It means that the job of filling the template with the required information is done on the server, and the final html will be sent to the client's browswer. Client side rendering is also becoming very popular, but it is very important to understand how different things work. 
+Let's break this down. This is the [Jinja Templating format (full synatx documentation here)]{https://jinja.palletsprojects.com/en/2.11.x/templates/}. In contrast to React, Vue or other frameworks, it is a server-side rendering framework. It means that the job of filling the template with the required information is done on the server, and the final html will be sent to the client's browswer. Client side rendering is also becoming very popular, but it is very important to understand how different things work. 
 
 The firstline calls a base template, if you open it, you will find a large chunk of html code. That is the base template for all webpages so we can share common HTML/CSS/JS code for all templates. In line ~127 of the base.html template, you can find something like:
 
