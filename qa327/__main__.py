@@ -1,4 +1,4 @@
-from qa327 import app
+from qa327 import app, frontend
 
 """
 This file runs the server at a given port
