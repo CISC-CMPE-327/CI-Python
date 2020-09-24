@@ -315,18 +315,20 @@ class SimpleLoginTest(BaseCase):
         self.click('input[type="submit"]')
 
     def login(self):
-        """ Login to Swag Labs and verify that login was successful. """
+        """ Login """
         self.open(base_url + '/login')
         self.type("#email", "test0")
         self.type("#password", "test0")
         self.click('input[type="submit"]')
 
     def test_register_login(self):
-        """ This test checks standard login for the Swag Labs store. """
+        """ This test checks register/login function """
         self.register()
         self.login()
         self.open(base_url)
+        # check if this element exists
         self.assert_element("#welcome-header")
+        # check if there are certain text in an element
         self.assert_text("Welcome test0", "#welcome-header")
  ```
 This one uses `SeleniumBase` API to control chrome browser. First we defined a class inherited from the BaseCase class, with the `@pytest.mark.usefixtures('server')` decoration (yes we need a live server running for this test case).
