@@ -1,9 +1,33 @@
-# CI-Python
+# GitHub Actions CI Template for Selenium+Flask MVC
 
 [![](https://github.com/CISC-CMPE-327/CI-Python/workflows/Python%20application/badge.svg)](https://github.com/CISC-CMPE-327/CI-Python/actions)
 
-### GitHub Actions CI Template for Selenium+Flask MVC
+## Instructions: 
 
+First, clone this repo:
+```
+git clone https://github.com/CISC-CMPE-327/CI-Python
+cd CI-Python 
+```
+
+To run the application (make sure you have a python environment of 3.5+)
+
+```
+$ pip install -r requirements.txt
+$ python -m qa327
+```
+
+You can register, login, logout from the web application. Data will be saved to a `db.sqlite` file under your working directory.
+
+To run all the test code:
+
+```
+$ pytest
+```
+You will see your browswer being controlled by the script automatically jumping around to test the website.
+
+
+## How does it work?
 
 Folder structure:
 ```
@@ -33,31 +57,6 @@ Folder structure:
     └───login
             test_live.py =======> two sample test cases
 ```
-
-First, clone this repo:
-```
-git clone https://github.com/CISC-CMPE-327/CI-Python
-cd CI-Python 
-```
-
-To run the application (make sure you have a python environment of 3.5+)
-
-```
-$ pip install -r requirements.txt
-$ python -m qa327
-```
-
-You can register, login, logout from the web application. Data will be saved to a `db.sqlite` file under your working directory.
-
-To run all the test code:
-
-```
-$ pytest
-```
-You will see your browswer being controlled by the script automatically jumping around to test the website.
-
-
-## How does it work?
 
 ![image](https://user-images.githubusercontent.com/8474647/94135588-ad25a700-fe31-11ea-8839-59699a9608db.png)
 
