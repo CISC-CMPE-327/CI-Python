@@ -27,15 +27,11 @@ Folder structure:
 │ 
 │ 
 └───qa327_test
-    │   test_main_approach1.py
-    │   test_main_approach2.py
-    │   __init__.py
+    │   conftest.py  ==========> run a live server for testing (we call it fixture)
+    │   __init__.py 
     │   
-    └───r2
-            terminal_input.txt
-            terminal_output_tail.txt
-            transaction_summary_file.txt
-            valid_account_list_file.txt
+    └───login
+            test_live.py =======> two sample test cases
 ```
 
 First, clone this repo:
@@ -247,5 +243,99 @@ You can create any other classes following this example.
 
 ### PyTest
 
+Now lets take a look at the testing part. Besides of the main package `qa327`, we also have a seperate package that contains all the testing code `qa327_test`:
 
-TBA
+```
+└───qa327_test
+    │   conftest.py  ==========> run a live server for testing (we call it fixture)
+    │   __init__.py 
+    │   
+    └───login
+            test_live.py =======> two sample test cases
+```
+
+`conftest.py` defines the fixtures for the test cases. These fixtures are resources that are needed to setup and shared between different test cases. In order to test the services and the web interface, we need to run the web server first. If we take a look at what is inside conftest.py (you are not supposed to understand every single line of this part):
+
+```python
+@pytest.fixture(scope="module", autouse=True)
+def server():
+    on_win = os.name == 'nt'
+    with tempfile.TemporaryDirectory() as tmp:
+        # create a live server for testing
+        # with a temporary file as database
+        db = os.path.join(tmp, 'db.sqlite')
+        p = subprocess.Popen(
+            ['python', '-m', 'qa327', db],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            # add process group id
+            # so it is easier to kill
+            preexec_fn=None if on_win else os.setsid
+        )
+        time.sleep(5)
+        yield
+        # triple kill!
+        # [for robust killing across different platforms]
+        if not on_win:
+            os.killpg(os.getpgid(p.pid), signal.SIGTERM)
+        p.terminate()
+        p.kill()
+        p.communicate()
+```
+Basically it creates a seperate process that run the web service. 
+Actually we use this command at the very begining of this documentation: `python -m qa327`.
+There is a `yield` statement, where this function will return to run the actual test cases. 
+Once all the test cases are finished, we return back to the yield statement, and continue executing the rest of the code
+to kill that process.
+Again, for this course, you don't need to change this for your course project. 
+
+Next, let's take a look at the actual test cases in `test_live.py`:
+
+```python
+@pytest.mark.usefixtures('server')
+def test_server_is_live():
+    r = requests.get(base_url)
+    assert r.status_code == 200
+```
+
+The first test case tries to connect to the base_url, which is the root route of the web service `http://localhost:8081`, and sees if the server is up. Status code 200 means the response returned without error and connection can be established. `@pytest.mark.usefixtures('server')` means that this test case relies on the fixture named `server`. If a test case requires a live server running, the test case should be decoreated with the same string. 
+
+The second test tries to open a chrome browser and control the chromebrowser to conduct the test case:
+```
+@pytest.mark.usefixtures('server')
+class SimpleLoginTest(BaseCase):
+
+    def register(self):
+        """register new user"""
+        self.open(base_url + '/register')
+        self.type("#email", "test0")
+        self.type("#name", "test0")
+        self.type("#password", "test0")
+        self.type("#password2", "test0")
+        self.click('input[type="submit"]')
+
+    def login(self):
+        """ Login to Swag Labs and verify that login was successful. """
+        self.open(base_url + '/login')
+        self.type("#email", "test0")
+        self.type("#password", "test0")
+        self.click('input[type="submit"]')
+
+    def test_register_login(self):
+        """ This test checks standard login for the Swag Labs store. """
+        self.register()
+        self.login()
+        self.open(base_url)
+        self.assert_element("#welcome-header")
+        self.assert_text("Welcome test0", "#welcome-header")
+ ```
+This one uses `SeleniumBase` API to control chrome browser. First we defined a class inherited from the BaseCase class, with the `@pytest.mark.usefixtures('server')` decoration (yes we need a live server running for this test case).
+Then all the `test_xxx` functions will be executed as a test case under this class.
+For this one, we have a `test_register_login` function. It means that we are going to test the registeration function.
+It first calls a register function, where the test case automatically fills in emails, passwords, and names into corresponding HTML elements using CSS selector. In this case, just using an ID selector. For `#email` it will look for element that has an attribute `id="email"`. `self.type` means typing into. 
+Then, the test case clicks the submit button. 
+After registeration, it tries to login using the same credential, and verifies if the weclome header is correctly displayed.
+
+
+
+
