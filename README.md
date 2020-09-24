@@ -57,6 +57,10 @@ $ pytest
 You will see your browswer being controlled by the script automatically jumping around to test the website.
 
 
+## How does it work?
+
+![image](https://user-images.githubusercontent.com/8474647/94135588-ad25a700-fe31-11ea-8839-59699a9608db.png)
+
 ### Frontend
 
 In order to understand every single bit of this template, first please try running it, registering a user, logging in, and logging out to develop a general sense of what is going on. 
