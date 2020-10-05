@@ -109,4 +109,5 @@ def profile(user):
     # by using @authenticate, we don't need to re-write
     # the login checking code all the time for other
     # front-end portals
-    return render_template('index.html', user=user)
+    tickets = bn.get_all_tickets()
+    return render_template('index.html', user=user, tickets=tickets)

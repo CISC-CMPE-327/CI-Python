@@ -7,5 +7,16 @@
 {% block content %}
 <h2 id="welcome-header">Welcome {{ user.name }} !</h2>
 
+
+<h2 >Here are all available tickets</h2>
+
+<div id="tickets">
+{% for ticket in tickets %}
+    <div>
+        <h4>{{ ticket.name }} {{ ticket.price }}</h4>
+    </div>
+{% endfor %}
+</div>
+
 <a href='/logout'>logout</a>
 {% endblock %}
