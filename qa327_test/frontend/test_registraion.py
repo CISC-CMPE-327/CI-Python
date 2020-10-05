@@ -34,11 +34,16 @@ class FrontEndHomePageTest(BaseCase):
         This is a sample front end unit test to login to home page
         and verify if the tickets are correctly listed.
         """
+        # open login page
         self.open(base_url + '/login')
+        # fill email and password
         self.type("#email", "test_frontend@test.com")
         self.type("#password", "test_frontend")
+        # click enter button
         self.click('input[type="submit"]')
+        # open home page
         self.open(base_url)
+        # test if the page loads correctly
         self.assert_element("#welcome-header")
         self.assert_text("Welcome test_frontend", "#welcome-header")
         self.assert_element("#tickets div h4")
@@ -48,9 +53,13 @@ class FrontEndHomePageTest(BaseCase):
     @patch('qa327.backend.get_all_tickets', return_value=test_tickets)
     def test_login_password_failed(self, *_):
         """ Login and verify if the tickets are correctly listed."""
+        # open login page
         self.open(base_url + '/login')
+        # fill wrong email and password
         self.type("#email", "test_frontend@test.com")
         self.type("#password", "wrong_password")
+        # click enter button
         self.click('input[type="submit"]')
+        # make sure it shows proper error message
         self.assert_element("#message")
         self.assert_text("login failed", "#message")
