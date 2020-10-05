@@ -6,13 +6,20 @@ from unittest.mock import patch
 from qa327.models import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 
+"""
+This file defines all unit tests for home page
+    
+Annotate @patch before unit tests can mock backend methods.
+"""
 
+# Moch a sample user
 test_user = User(
     email='test_frontend@test.com',
     name='test_frontend',
     password=generate_password_hash('test_frontend')
 )
 
+# Moch some sample tickets
 test_tickets = [
     {'name': 't1', 'price': '100'}
 ]
@@ -23,7 +30,10 @@ class FrontEndHomePageTest(BaseCase):
     @patch('qa327.backend.get_user', return_value=test_user)
     @patch('qa327.backend.get_all_tickets', return_value=test_tickets)
     def test_login_success(self, *_):
-        """ Login and verify if the tickets are correctly listed."""
+        """
+        This is a sample front end unit test to login to home page
+        and verify if the tickets are correctly listed.
+        """
         self.open(base_url + '/login')
         self.type("#email", "test_frontend@test.com")
         self.type("#password", "test_frontend")
