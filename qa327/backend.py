@@ -39,19 +39,6 @@ def register_user(email, name, password, password2):
     :param password2: another password input to make sure the input is correct
     :return: an error message if there is any, or None if register succeeds
     """
-    user = User.query.filter_by(email=email).first()
-
-    if user:
-        return "User existed"
-
-    if password != password2:
-        return "The passwords do not match"
-
-    if len(email) < 1:
-        return "Email format error"
-
-    if len(password) < 1:
-        return "Password not strong enough"
 
     hashed_pw = generate_password_hash(password, method='sha256')
     # store the encrypted password rather than the plain password
@@ -60,3 +47,7 @@ def register_user(email, name, password, password2):
     db.session.add(new_user)
     db.session.commit()
     return None
+
+
+def get_all_tickets():
+    return []

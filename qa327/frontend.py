@@ -22,7 +22,23 @@ def register_post():
     name = request.form.get('name')
     password = request.form.get('password')
     password2 = request.form.get('password2')
-    error_message = bn.register_user(email, name, password, password2)
+    error_message = None
+
+
+    if password != password2:
+        error_message = "The passwords do not match"
+
+    elif len(email) < 1:
+        error_message = "Email format error"
+
+    elif len(password) < 1:
+        error_message = "Password not strong enough"
+    else:
+        user = bn.get_user(email)
+        if user:
+            error_message = "User exists"
+        elif not bn.register_user(email, name, password, password2):
+            error_message = "Failed to store user info."
     # if there is any error messages when registering new user
     # at the backend, go back to the register page.
     if error_message:
@@ -109,4 +125,5 @@ def profile(user):
     # by using @authenticate, we don't need to re-write
     # the login checking code all the time for other
     # front-end portals
-    return render_template('index.html', user=user)
+    tickets = bn.get_all_tickets()
+    return render_template('index.html', user=user, tickets=tickets)
