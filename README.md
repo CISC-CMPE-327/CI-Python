@@ -32,31 +32,36 @@ You will see your browswer being controlled by the script automatically jumping 
 Folder structure:
 ```
 .
-│   .gitignore
-│   LICENSE
-│   README.md
-│   requirements.txt ========> python dependencies, a MUST
+├── LICENSE
+├── README.md
+├── .github
+│   └── workflows
+│       └── pythonapp.yml ======> CI workflow for python (trigger test for commits/pull-requests)
 │
-├───.github
-│   └───workflows
-│           pythonapp.yml =======> CI workflow for python
-│
-├───qa327
-│   │   app.py ===============> where we actually store the main function
-│   │   __init__.py
-│   └───__main__.py ==========> trigger by 'python -m qa327'
-│   └───frontend.py ==========> defines frontend logic
-│   └───backend.py  ==========> defines backend logic
-│   └───models.py   ==========> defines all the models
-│ 
-│ 
-└───qa327_test
-    │   conftest.py  ==========> run a live server for testing (we call it fixture)
-    │   __init__.py 
-    │   
-    └───login
-            test_live.py =======> two sample test cases
+├── qa327
+│   ├── __init__.py.  ==========> we define our flask app instance here
+│   ├── __main__.py   ==========> trigger by 'python -m qa327'
+│   ├── backend.py    ==========> defines backend logic
+│   ├── frontend.py   ==========> defines frontend logic
+│   ├── models.py.    ==========> defines all the data models
+│   └── templates
+│       ├── base.html
+│       ├── index.html
+│       ├── login.html
+│       └── register.html
+├── qa327_test
+│   ├── __init__.py
+│   ├── backend
+│   ├── conftest.py
+│   ├── frontend
+│   │   ├── test_connection.py
+│   │   └── test_registraion.py
+│   └── integration
+│       └── test_registration.py
+└── requirements.txt  ====================> python dependencies, a MUST
 ```
+
+qa327 is the module that contains the application, and qa327_test is the module that contains the testing code for qa327
 
 ![image](https://user-images.githubusercontent.com/8474647/94135588-ad25a700-fe31-11ea-8839-59699a9608db.png)
 
@@ -246,67 +251,67 @@ You can create any other classes following this example.
 
 ### PyTest
 
-Now lets take a look at the testing part. Besides of the main package `qa327`, we also have a seperate package that contains all the testing code `qa327_test`:
+The testing will contain three parts (frontend testing, backend testing and integration testing). For now we include the examples for frontend testing and integration testing. Backend testing (unit testing in our case) is straightforward (will be covered in the lecture), so we didn't include them for now.
 
-```
-└───qa327_test
-    │   conftest.py  ==========> run a live server for testing (we call it fixture)
-    │   __init__.py 
-    │   
-    └───login
-            test_live.py =======> two sample test cases
-```
+Let's take a look at the file structure:
 
-`conftest.py` defines the fixtures for the test cases. These fixtures are resources that are needed to setup and shared between different test cases. In order to test the services and the web interface, we need to run the web server first. If we take a look at what is inside conftest.py (you are not supposed to understand every single line of this part):
+````
+├── qa327_test
+│   ├── __init__.py
+│   ├── conftest.py  ===================> defines fixture (run the web server)
+│   ├── frontend                ========> testing the front-end (without backend, using mocking)
+│   │   ├── test_connection.py  ========> testing if we can connect
+│   │   └── test_registraion.py ========> testing the login page and home page (without backend, using mocking)
+│   └── integration             ========> integration testing (running both frontend and the backend)
+│       └── test_registration.py =======> testing the registration process (actually storing/reading data from database)
+````
+
+conftest.py defines the fixtures for the test cases. These fixtures are resources that are needed to setup and shared between different test cases. In order to test the services and the web interface, we need to run the web server first. If we take a look at what is inside conftest.py (you are not supposed to understand every single line of this part):
 
 ```python
+class ServerThread(threading.Thread):
+
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.srv = make_server('127.0.0.1', FLASK_PORT, app)
+        self.ctx = app.app_context()
+        self.ctx.push()
+
+    def run(self):
+        self.srv.serve_forever()
+
+    def shutdown(self):
+        self.srv.shutdown()
+
+
 @pytest.fixture(scope="module", autouse=True)
 def server():
     on_win = os.name == 'nt'
-    with tempfile.TemporaryDirectory() as tmp:
+    with tempfile.TemporaryDirectory() as tmp_folder:
         # create a live server for testing
         # with a temporary file as database
-        db = os.path.join(tmp, 'db.sqlite')
-        p = subprocess.Popen(
-            ['python', '-m', 'qa327', db],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            # add process group id
-            # so it is easier to kill
-            preexec_fn=None if on_win else os.setsid
-        )
+        db = os.path.join(tmp_folder, 'db.sqlite')
+        server = ServerThread()
+        server.start()
         time.sleep(5)
         yield
-        # triple kill!
-        # [for robust killing across different platforms]
-        if not on_win:
-            os.killpg(os.getpgid(p.pid), signal.SIGTERM)
-        p.terminate()
-        p.kill()
-        p.communicate()
+        server.shutdown()
+        time.sleep(2)
 ```
-Basically it creates a seperate process that run the web service. 
-Actually we use this command at the very begining of this documentation: `python -m qa327`.
-There is a `yield` statement, where this function will return to run the actual test cases. 
-Once all the test cases are finished, we return back to the yield statement, and continue executing the rest of the code
-to kill that process.
-Again, for this course, you don't need to change this for your course project. 
 
-Next, let's take a look at the actual test cases in `test_live.py`:
+We create a new thread that run the web service. There is a yield statement, where this function will return to run the actual test cases. Once all the test cases are finished, we return back to the yield statement, and continue executing the rest of the code to terminate the thread. Again, for this course, you don't need to change this for your course project.
+
+Next, let's take a look at **integration testing** first, the `test_registration.py` file under `integration_test` folder:
+
+```
+│   └── integration             ========> integration testing (running both frontend and the backend)
+│       └── test_registration.py =======> testing the registration process (actually storing/reading data from database)
+````
 
 ```python
-@pytest.mark.usefixtures('server')
-def test_server_is_live():
-    r = requests.get(base_url)
-    assert r.status_code == 200
-```
 
-The first test case tries to connect to the base_url, which is the root route of the web service `http://localhost:8081`, and sees if the server is up. Status code 200 means the response returned without error and connection can be established. `@pytest.mark.usefixtures('server')` means that this test case relies on the fixture named `server`. If a test case requires a live server running, the test case should be decoreated with the same string. 
-
-The second test tries to open a chrome browser and control the chromebrowser to conduct the test case:
-```
 @pytest.mark.usefixtures('server')
-class SimpleLoginTest(BaseCase):
+class Registered(BaseCase):
 
     def register(self):
         """register new user"""
@@ -318,29 +323,109 @@ class SimpleLoginTest(BaseCase):
         self.click('input[type="submit"]')
 
     def login(self):
-        """ Login """
+        """ Login to Swag Labs and verify that login was successful. """
         self.open(base_url + '/login')
         self.type("#email", "test0")
         self.type("#password", "test0")
         self.click('input[type="submit"]')
 
     def test_register_login(self):
-        """ This test checks register/login function """
+        """ This test checks the implemented login/logout feature """
         self.register()
         self.login()
         self.open(base_url)
-        # check if this element exists
         self.assert_element("#welcome-header")
-        # check if there are certain text in an element
         self.assert_text("Welcome test0", "#welcome-header")
- ```
-This one uses `SeleniumBase` API to control chrome browser. First we defined a class inherited from the BaseCase class, with the `@pytest.mark.usefixtures('server')` decoration (yes we need a live server running for this test case).
-Then all the `test_xxx` functions will be executed as a test case under this class.
-For this one, we have a `test_register_login` function. It means that we are going to test the registeration function.
-It first calls a register function, where the test case automatically fills in emails, passwords, and names into corresponding HTML elements using CSS selector. In this case, just using an ID selector. For `#email` it will look for element that has an attribute `id="email"`. `self.type` means typing into. 
-Then, the test case clicks the submit button. 
-After registeration, it tries to login using the same credential, and verifies if the weclome header is correctly displayed.
 
+```
+This one uses SeleniumBase API to control chrome browser. First we defined a class inherited from the BaseCase class, with the @pytest.mark.usefixtures('server') decoration (yes we need a live server running for this test case). Then all the test_xxx functions will be executed as a test case under this class. For this one, we have a test_register_login function. It means that we are going to test the registeration function. It first calls a register function, where the test case automatically fills in emails, passwords, and names into corresponding HTML elements using CSS selector. In this case, just using an ID selector. For #email it will look for element that has an attribute id="email". self.type means typing into. Then, the test case clicks the submit button. After registeration, it tries to login using the same credential, and verifies if the weclome header is correctly displayed.
 
+This test case runs both the frontend and the backend at the same time, as you can tell from the qa327 folder, the registration backend has been implemented. This is what we suppose to do in the **last assignment**. But before that, we will be only **testing the frontend and backend separately**.
 
+Lets take a look at the frontend testing code, where we are supposed to run the frontend **without the backend**. How can we do it? We use a method called mocking. Lets take a look at the file `test_registraion.py` under the `qa327_test/frontend` folder:
 
+```
+│   ├── frontend                ========> testing the front-end (without backend, using mocking)
+│   │   └── test_registraion.py ========> testing the login page and home page (without backend, using mocking)
+```
+
+```python
+# Moch a sample user
+test_user = User(
+    email='test_frontend@test.com',
+    name='test_frontend',
+    password=generate_password_hash('test_frontend')
+)
+
+# Moch some sample tickets
+test_tickets = [
+    {'name': 't1', 'price': '100'}
+]
+
+```
+First, this file define a user object and a list of tickets object. Since we don't run the actual backend, we need to create faked object to test the frontend. This process is called mocking. So we need to patch the backend to have its certain functions returning the mocked object. After creating the faked objects, we can start our test cases: (in the same file `test_registration.py` for frontend)
+
+```python
+
+class FrontEndHomePageTest(BaseCase):
+
+    @patch('qa327.backend.get_user', return_value=test_user)
+    @patch('qa327.backend.get_all_tickets', return_value=test_tickets)
+    def test_login_success(self, *_):
+        """
+        This is a sample front end unit test to login to home page
+        and verify if the tickets are correctly listed.
+        """
+        # open login page
+        self.open(base_url + '/login')
+        # fill email and password
+        self.type("#email", "test_frontend@test.com")
+        self.type("#password", "test_frontend")
+        # click enter button
+        self.click('input[type="submit"]')
+        
+        # after clicking on the browser (the line above)
+        # the front-end code is activated 
+        # and tries to call get_user function.
+        # The get_user function is supposed to read data from database
+        # and return the value. However, here we only want to test the
+        # front-end, without running the backend logics. 
+        # so we patch the backend to return a specific user instance, 
+        # rather than running that program. (see @ annotations above)
+        
+        
+        # open home page
+        self.open(base_url)
+        # test if the page loads correctly
+        self.assert_element("#welcome-header")
+        self.assert_text("Welcome test_frontend", "#welcome-header")
+        self.assert_element("#tickets div h4")
+        self.assert_text("t1 100", "#tickets div h4")
+
+    @patch('qa327.backend.get_user', return_value=test_user)
+    @patch('qa327.backend.get_all_tickets', return_value=test_tickets)
+    def test_login_password_failed(self, *_):
+        """ Login and verify if the tickets are correctly listed."""
+        # open login page
+        self.open(base_url + '/login')
+        # fill wrong email and password
+        self.type("#email", "test_frontend@test.com")
+        self.type("#password", "wrong_password")
+        # click enter button
+        self.click('input[type="submit"]')
+        # make sure it shows proper error message
+        self.assert_element("#message")
+        self.assert_text("login failed", "#message")
+
+```
+This is very similar to the above selenium example for integration testing, except that we put annotation on the testing functions. 
+These annotation will patch the program in the scope of current test case. 
+The tests will only test the frontend portion of the program, by patching the backend to return
+specfic values. For example:
+
+```python
+@patch('qa327.backend.get_user', return_value=test_user)
+```
+
+Will patch the backend `get_user` function (within the scope of the current test case)
+so that it return `test_user` instance below rather than actually reading the user data from the database. 
