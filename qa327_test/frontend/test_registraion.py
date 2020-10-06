@@ -7,9 +7,18 @@ from qa327.models import db, User
 from werkzeug.security import generate_password_hash, check_password_hash
 
 """
-This file defines all unit tests for home page
-    
-Annotate @patch before unit tests can mock backend methods.
+This file defines all unit tests for the frontend homepage.
+
+The tests will only test the frontend portion of the program, by patching the backend to return
+specfic values. For example:
+
+@patch('qa327.backend.get_user', return_value=test_user)
+
+Will patch the backend get_user function (within the scope of the current test case)
+so that it return 'test_user' instance below rather than reading
+the user from the database.
+
+Annotate @patch before unit tests can mock backend methods (for that testing function)
 """
 
 # Moch a sample user
@@ -41,6 +50,17 @@ class FrontEndHomePageTest(BaseCase):
         self.type("#password", "test_frontend")
         # click enter button
         self.click('input[type="submit"]')
+        
+        # after clicking on the browser (the line above)
+        # the front-end code is activated 
+        # and tries to call get_user function.
+        # The get_user function is supposed to read data from database
+        # and return the value. However, here we only want to test the
+        # front-end, without running the backend logics. 
+        # so we patch the backend to return a specific user instance, 
+        # rather than running that program. (see @ annotations above)
+        
+        
         # open home page
         self.open(base_url)
         # test if the page loads correctly
