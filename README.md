@@ -173,20 +173,7 @@ def register_user(email, name, password, password2):
     :param password2: another password input to make sure the input is correct
     :return: an error message if there is any, or None if register succeeds
     """
-    user = User.query.filter_by(email=email).first()
-
-    if user:
-        return "User existed"
-
-    if password != password2:
-        return "The passwords do not match"
-
-    if len(email) < 1:
-        return "Email format error"
-
-    if len(password) < 1:
-        return "Password not strong enough"
-
+    
     hashed_pw = generate_password_hash(password, method='sha256')
     # store the encrypted password rather than the plain password
     new_user = User(email=email, name=name, password=hashed_pw)
@@ -198,9 +185,7 @@ def register_user(email, name, password, password2):
 
 ```
 
-It takes user email, name (for dispaly purpsoe), user entered password, and user re-entered password. Frist, as a typical registration process, we need to check if anyone else has already used this email address before. So we use the User model, which we will explain later on, to find a user with the same email address. If we find a user, it means the email is already associated with a user, else, it means the email is available. 
-
-So if user exists, we return "user existed" message. Then there are couple input checks that are very much self-explinatory. Before we storing the user data, we need to stored a hashed version of the password, rather than the original one. The reason is that, if your database gets hacked, all the plaintext passwords will be available to the hacker. Hashing is a one way function. It means that same passwords will yield the same hash. But with hash value only, the attacker cannot generate the original password. In this way, even if the database is leaked, the clients credentials are still safe. Then we create a user, and save it to the databae. 
+It takes user email, name (for dispaly purpsoe), user entered password, and user re-entered password. Before we storing the user data, we need to stored a hashed version of the password, rather than the original one. The reason is that, if your database gets hacked, all the plaintext passwords will be available to the hacker. Hashing is a one way function. It means that same passwords will yield the same hash. But with hash value only, the attacker cannot generate the original password. In this way, even if the database is leaked, the clients credentials are still safe. Then we create a user using the data model (will talk about this below), and save it to the databae. 
 
 
 ### Models
