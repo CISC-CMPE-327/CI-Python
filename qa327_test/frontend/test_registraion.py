@@ -47,7 +47,7 @@ class FrontEndHomePageTest(BaseCase):
         self.open(base_url + '/login')
         # fill email and password
         self.type("#email", "test_frontend@test.com")
-        self.type("#password", "test_frontend")
+        self.type("#password", "test_frontend2")
         # click enter button
         self.click('input[type="submit"]')
         
