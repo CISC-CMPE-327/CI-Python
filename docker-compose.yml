@@ -1,0 +1,43 @@
+version: "2"
+services:
+  seetgeek-web:
+    image: your_company/seetgeek
+    depends_on:
+      - seetgeek-db
+    links:
+      - seetgeek-db
+    ports:
+      - "8081:8081"
+    environment:
+      - db_string=mysql+pymysql://root:root@seetgeek-db/qa327
+    command:  ["./wait-for-it.sh", "seetgeek-db:3306", "--strict" , "--timeout=300", "--", "python", "-m", "qa327"]
+    networks:
+      - seetgeek-site
+  
+  seetgeek-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    command: --init-file /data/application/init.sql
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+      - ./db_init.sql:/data/application/init.sql
+    networks:
+      - seetgeek-site
+    
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    depends_on: 
+      - seetgeek-db
+    environment:
+      PMA_HOST: seetgeek-db
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8082:80
+    networks:
+      - seetgeek-site
+
+networks:
+  seetgeek-site:

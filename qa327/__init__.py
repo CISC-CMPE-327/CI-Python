@@ -22,8 +22,11 @@ app.config['SECRET_KEY'] = '69cae04b04756f65eabcd2c5a11c8c24'
 # for windows user, C:\ is the root directory, so it
 # should not be included. e.g. Users/xxx/Document/db.sqlite
 db_name = os.getenv('DB_NAME')
+db_string = os.getenv('db_string')
 if db_name:
     database_url = "sqlite:////" + db_name
+elif db_string:
+    database_url = db_string
 else:
     # default:
     # db.sqlite at the working directory
